@@ -1,44 +1,51 @@
-"""Welcome to Reflex! This file outlines the steps to create a basic app."""
-from rxconfig import config
+"""Script principal donde se desarrolla la app."""
 
 import reflex as rx
 
-docs_url = "https://reflex.dev/docs/getting-started/introduction"
-filename = f"{config.app_name}/{config.app_name}.py"
-
-
 class State(rx.State):
-    """The app state."""
-
     pass
 
+class BotonAbout(rx.State):
+    color_scheme = 'red'
 
+    def flip_color(self) -> None:
+        if self.color_scheme == 'red':
+            self.color_scheme = 'blue'
+        else:
+            self.color_scheme = 'red'
+
+def abrir_markdown() -> str:
+    with open('LinkBio/prueba.md', 'r') as f:
+        texto = f.read()
+    return texto
+
+@rx.page(route="/", title="Página Principal")
 def index() -> rx.Component:
-    return rx.fragment(
-        rx.color_mode_button(rx.color_mode_icon(), float="right"),
-        rx.vstack(
-            rx.heading("Bienvenido a mis aplicaciones!", font_size="2em"),
-            rx.box("Get started by editing ", rx.code(filename, font_size="1em")),
-            rx.link(
-                "Check out our docs!",
-                href=docs_url,
-                border="0.1em solid",
-                padding="0.5em",
-                border_radius="0.5em",
-                _hover={
-                    "color": rx.color_mode_cond(
-                        light="rgb(107,99,246)",
-                        dark="rgb(179, 175, 255)",
-                    )
-                },
-            ),
-            spacing="1.5em",
-            font_size="2em",
-            padding_top="10%",
-        ),
-    )
+    boton_about = rx.button("About",
+                            border_radius="1em",
+                            color_scheme=BotonAbout.color_scheme,
+                            size='sm',
+                            variant='ghost',
+                            on_click=BotonAbout.flip_color,
+                            _hover={
+                                'opacity': 1
+                            })
+    texto = rx.text('Página Principal')
+    return rx.vstack(texto, boton_about, align_items="start")
 
+@rx.page(route='/md', title='Render en Markdown')
+def markdown_page() -> rx.Component:
+    return rx.markdown(f"""{abrir_markdown()}""")
 
-# Create app instance and add index page.
+@rx.page(route='/about', title='Sobre mi')
+def about() -> rx.Component:
+    texto_sergio = rx.text('Sergio Tejedor 2024', 
+                    color='red',
+                    font_size='2em')
+    avatar_sergio = rx.avatar(name="Sergio Tejedor")
+    return rx.hstack(avatar_sergio, texto_sergio)
+
 app = rx.App()
-app.add_page(index)
+# app.add_page(index, route='/') Si ponemos el decorador ya no hace falta esto
+# app.add_page(about, route='/about')
+# app.compile() Ya no es necesario
