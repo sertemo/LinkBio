@@ -3,6 +3,9 @@
 import reflex as rx
 from  LinkBio.components.navbar import navbar
 from LinkBio.views.header.header import header
+from LinkBio.components.footer import footer
+from LinkBio.views.links.links import links
+import LinkBio.styles.styles as styles
 
 class State(rx.State):
     pass
@@ -16,10 +19,20 @@ def abrir_markdown() -> str:
 
 @rx.page(route="/", title='Bienvenido a Sergio Tejedor')
 def index() -> rx.Component:
-    return rx.vstack(
+    return rx.chakra.box(
         navbar(),
-        header(),
+        rx.chakra.center(
+            rx.chakra.vstack(
+                header(),
+                links(),
+                max_width=styles.MAX_WIDTH,
+                width='100%',
+                margin_y=styles.Spacer.BIG.value
+            ),
+        ),        
+        footer(),
     )
+
 
 
 @rx.page(route='/md', title='Render en Markdown')
