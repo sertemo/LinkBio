@@ -11,11 +11,6 @@ class State(rx.State):
     pass
 
 
-def abrir_markdown() -> str:
-    with open('LinkBio/prueba.md', 'r') as f:
-        texto = f.read()
-    return texto
-
 
 @rx.page(route="/", title='Bienvenido a Sergio Tejedor')
 def index() -> rx.Component:
@@ -27,7 +22,7 @@ def index() -> rx.Component:
                 links(),
                 max_width=styles.MAX_WIDTH,
                 width='100%',
-                margin_y=styles.Spacer.BIG.value
+                margin_y=styles.Size.BIG.value
             ),
         ),        
         footer(),
@@ -43,7 +38,7 @@ def markdown_page() -> rx.Component:
             rx.markdown(f"""{abrir_markdown()}""")
         )
     )
-        
+
 
 @rx.page(route='/about', title='Sobre mi')
 def about() -> rx.Component:
@@ -53,7 +48,16 @@ def about() -> rx.Component:
     avatar_sergio = rx.avatar(name="Sergio Tejedor")
     return rx.hstack(avatar_sergio, texto_sergio)
 
-app = rx.App()
+
+def abrir_markdown() -> str:
+    with open('LinkBio/prueba.md', 'r') as f:
+        texto = f.read()
+    return texto
+
+
+app = rx.App(
+    style=styles.BASE_STYLES
+)
 # app.add_page(index, route='/') Si ponemos el decorador ya no hace falta esto
 # app.add_page(about, route='/about')
 # app.compile() Ya no es necesario

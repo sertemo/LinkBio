@@ -1,7 +1,7 @@
 import reflex as rx
 
 def header() -> rx.Component:
-    return rx.vstack(
+    return rx.chakra.vstack(
         rx.chakra.avatar(name='Sergio Tejedor',
                     size='xl',
                     ),
@@ -17,5 +17,4 @@ def header() -> rx.Component:
                 Aquí podrás encontrar una lista de aplicaciones que he
                 ido desarrollando."""
                 ),
-        align='center',
     )

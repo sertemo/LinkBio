@@ -1,15 +1,16 @@
 import reflex as rx
+import LinkBio.styles.styles as styles
 
 def navbar() -> rx.Component:
     return rx.hstack(
         rx.text(
             'sertemo',
-            height='40px'
         ),
         position='sticky',
-        bg="blue",
-        padding_x='16px',
-        padding_y='8px',
+        bg="lightgray",
+        padding_x=styles.Size.DEFAULT.value,
+        padding_y=styles.Size.SMALL.value,
         z_index='999',
-        align='center'
+        align='center',
+        top='0', # para que la barra siempre esté en el top de la pantalla
     )
