@@ -8,7 +8,7 @@ MAX_WIDTH = '600px'
 # Sizes
 class Size(Enum):
     SMALL = '0.5em' # em toma como referencia el tamaño de fuente
-    MEDIUM = '0.8em',
+    MEDIUM = '0.8em'
     DEFAULT = '1em' # de la app
     BIG = '2em'
 
@@ -28,7 +28,6 @@ BASE_STYLES = {
 }
 
 TITLE_STYLE = dict(
-    size='md',
     width='100%',
     padding_top=Size.DEFAULT.value
 )

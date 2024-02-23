@@ -2,6 +2,7 @@ import reflex as rx
 
 from LinkBio.components.link_button import link_button
 from LinkBio.components.title import title
+import LinkBio.styles.styles as styles
 
 def links() -> rx.Component:
     return rx.chakra.vstack(
@@ -21,5 +22,9 @@ def links() -> rx.Component:
                     'Lanza mails masivos con formato',
                     '''https://talsa-mailing.streamlit.app/'''
                     ),
-                    width='100%',
+        link_button('Graphicator',
+                    'Calcula inercias de secciones',
+                    'https://graphicator.streamlit.app/'),
+        width='100%',
+        spacing=styles.Size.MEDIUM.value
     )
