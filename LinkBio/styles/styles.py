@@ -1,12 +1,13 @@
 from enum import Enum
 import reflex as rx
-
+from .colors import Color, TextColor
 
 # Constants
 MAX_WIDTH = '600px'
 
 # Sizes
 class Size(Enum):
+    ZERO = '0px !important'
     SMALL = '0.5em' # em toma como referencia el tamaño de fuente
     MEDIUM = '0.8em'
     DEFAULT = '1em' # de la app
@@ -14,12 +15,18 @@ class Size(Enum):
 
 # Styles : Estilos para todos los componentes
 BASE_STYLES = {
+    'background_color': Color.BACKGROUND.value ,
     rx.chakra.Button: {
         'width': '100%',
         'height': '100%',
         'display': 'block',
         'padding': Size.SMALL.value,
-        'border_radius': Size.DEFAULT.value
+        'border_radius': Size.DEFAULT.value,
+        'background_color': Color.CONTENT.value,
+        'color': TextColor.HEADER.value,
+        '_hover': {
+            'background_color': Color.SECONDARY.value
+        }
     },
     rx.chakra.Link: {
         'text_decoration': 'none',
@@ -29,14 +36,16 @@ BASE_STYLES = {
 
 TITLE_STYLE = dict(
     width='100%',
-    padding_top=Size.DEFAULT.value
+    padding_top=Size.DEFAULT.value,
+    color=TextColor.HEADER.value
 )
 
 BUTTON_TITLE_STYLES = dict(
     font_size=Size.DEFAULT.value,    
+    color=TextColor.HEADER.value
 )
 BUTTON_BODY_STYLES = dict(
     font_size=Size.MEDIUM.value,
-    color='#808080'
+    color=TextColor.BODY.value
 )
 

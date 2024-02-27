@@ -1,13 +1,14 @@
 import reflex as rx
 from datetime import datetime
 import LinkBio.styles.styles as styles
+from LinkBio.styles.styles import Color, TextColor
 
 
 def footer() -> rx.Component:
     return rx.chakra.box(
         rx.chakra.vstack(
             rx.chakra.image(
-                src='img/stm_logo.png',
+                src='favicon.ico',
                 html_width='70px',
                 html_height='auto'
                 ),
@@ -22,8 +23,10 @@ def footer() -> rx.Component:
             rx.chakra.text(
                 'BUILDING YOUR IDEAS',
                 font_size=styles.Size.MEDIUM.value,
-                margin_top='0px !important'
+                margin_top=styles.Size.ZERO.value
                 ),
-            margin_bottom=styles.Size.BIG.value
+            margin_bottom=styles.Size.BIG.value,
+            color=TextColor.FOOTER.value,
+            padding_bottom=styles.Size.BIG.value
         ),
     )

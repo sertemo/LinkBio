@@ -2,20 +2,26 @@ import reflex as rx
 from LinkBio.components.link_icon import link_icon
 from LinkBio.components.info_text import info_text
 import LinkBio.styles.styles as styles
+from LinkBio.styles.styles import Color, TextColor
 
 def header() -> rx.Component:
     return rx.chakra.vstack(
         rx.chakra.hstack(
             rx.chakra.avatar(
                 name='Sergio Tejedor',
-                size='xl'),
+                size='xl',
+                color='yellow'
+                ),
             rx.chakra.vstack(
                 rx.chakra.heading(
                     'Sergio Tejedor',
-                    size='lg'),
+                    size='lg',
+                    color=TextColor.HEADER.value,
+                    ),
                 rx.chakra.text(
                     '@TejedorMoreno',
-                    margin_top='0px !important'),
+                    margin_top=styles.Size.ZERO.value,
+                    color=TextColor.BODY.value),
                 rx.chakra.hstack(
                     link_icon('http://github.com/sertemo', 'GitHub'),
                     link_icon('http://github.com/sertemo', 'Linkdin')
@@ -40,7 +46,8 @@ def header() -> rx.Component:
                 estoy expandiendo mis habilidades a través de un bootcamp 
                 intensivo en ciencia de datos.
                 Aquí podrás encontrar una lista de aplicaciones que he
-                ido desarrollando."""
+                ido desarrollando.""",
+                color=TextColor.BODY.value
                 ),
         align_items='start',
         spacing=styles.Size.BIG.value

@@ -1,15 +1,17 @@
 import reflex as rx
 import LinkBio.styles.styles as styles
+from LinkBio.styles.styles import TextColor, Color
 
 def navbar() -> rx.Component:
     return rx.hstack(
-        rx.text(
-            'sertemo',
-        ),
+        rx.chakra.box(
+            rx.chakra.span('ser', color=Color.PRIMARY.value),
+            rx.chakra.span('temo', color=Color.SECONDARY.value),
+        ),            
         position='sticky',
-        bg="lightgray",
-        padding_x=styles.Size.DEFAULT.value,
-        padding_y=styles.Size.SMALL.value,
+        bg=Color.CONTENT.value,
+        padding_x=styles.Size.BIG.value,
+        padding_y=styles.Size.DEFAULT.value,
         z_index='999',
         align='center',
         top='0', # para que la barra siempre esté en el top de la pantalla

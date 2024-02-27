@@ -11,7 +11,7 @@ def links() -> rx.Component:
                     'Chatea con mi CV',
                     'https://stm-cv.streamlit.app/'),
         link_button('Artículo Kopuru',
-                    'Aprende a usar Streamlit',
+                    'Aprende a usar Streamlit reconociendo dígitos con IA',
                     '''https://kopuru.com/desarrollo-y-despliegue-de-modelo-de-reconocimiento-con-streamlit/'''
                     ),
         title('Apps para empresas'),
