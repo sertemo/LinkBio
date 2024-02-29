@@ -11,6 +11,7 @@ class Size(Enum):
     SMALL = '0.5em' # em toma como referencia el tamaño de fuente
     MEDIUM = '0.8em'
     DEFAULT = '1em' # de la app
+    LARGE = '1.5em'
     BIG = '2em'
 
 # Styles : Estilos para todos los componentes
@@ -47,5 +48,10 @@ BUTTON_TITLE_STYLES = dict(
 BUTTON_BODY_STYLES = dict(
     font_size=Size.MEDIUM.value,
     color=TextColor.BODY.value
+)
+
+NAVBAR_TITLE_STYLE = dict(
+    font_size=Size.LARGE.value,
+    font_family='Marhey',
 )
 

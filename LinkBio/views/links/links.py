@@ -14,6 +14,16 @@ def links() -> rx.Component:
                     'Aprende a usar Streamlit reconociendo dígitos con IA',
                     '''https://kopuru.com/desarrollo-y-despliegue-de-modelo-de-reconocimiento-con-streamlit/'''
                     ),
+        link_button('Quijote GPT',
+        'Decoder entrenado con el Quijote',
+        ''''''
+                    ),
+        link_button('Q2 pdf',
+                    'Chatea con tus archivos pdf',
+                    'https://q2-pdf.streamlit.app/'),
+        link_button('SyTiCo',
+                    'Resume el contenido de un video de YouTube',
+                    'https://sytico.streamlit.app/'),
         title('Apps para empresas'),
         link_button('Profile Hunter', 
                     'Caza futuros clientes',
@@ -25,6 +35,16 @@ def links() -> rx.Component:
         link_button('Graphicator',
                     'Calcula inercias de secciones',
                     'https://graphicator.streamlit.app/'),
+        title('Apps Variadas'),
+        link_button('Collatz',
+                    'Juega con la conjetura de Collatz',
+                    'https://collatzeral.streamlit.app/Gr%C3%A1ficos'),
+        link_button('BBQ Balance',
+                    'Ajusta cuentas con tu cuadrilla',
+                    'https://github.com/sertemo/bbqbalance'),
+        link_button('MecanOdei',
+                    'Mejora tu mecanografía',
+                    'https://github.com/sertemo/MecanOdei'),
         width='100%',
         spacing=styles.Size.MEDIUM.value
     )
