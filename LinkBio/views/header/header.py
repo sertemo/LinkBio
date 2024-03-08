@@ -15,8 +15,6 @@ def header() -> rx.Component:
             rx.chakra.vstack(
                 rx.chakra.heading(
                     'Sergio Tejedor',
-                    size='lg',
-                    color=TextColor.HEADER.value,
                     ),
                 rx.chakra.text(
                     '@TejedorMoreno',
