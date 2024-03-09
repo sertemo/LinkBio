@@ -9,9 +9,14 @@ def footer() -> rx.Component:
         rx.chakra.vstack(
             rx.chakra.image(
                 src='favicon.ico',
-                html_width='70px',
+                html_width='40px',
                 html_height='auto'
                 ),
+            rx.chakra.text(
+            'Hecho con Reflex',
+            font_size=styles.Size.MEDIUM.value,
+            margin_bottom=styles.Size.ZERO.value
+            ),
             rx.chakra.hstack(
                 rx.chakra.link(
                     rx.chakra.text(
@@ -19,6 +24,7 @@ def footer() -> rx.Component:
                         font_size=styles.Size.MEDIUM.value),
                     href='https://github.com/sertemo',
                     is_external=True),
+                margin_top=styles.Size.ZERO.value
             ),                
             rx.chakra.text(
                 'BUILDING YOUR IDEAS',
@@ -29,4 +35,5 @@ def footer() -> rx.Component:
             color=TextColor.FOOTER.value,
             padding_bottom=styles.Size.BIG.value
         ),
+        margin_top=styles.Size.BIG.value
     )
