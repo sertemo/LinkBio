@@ -8,7 +8,7 @@ def link_icon(url: str,
     return rx.chakra.link(
         rx.chakra.image(
             src=image,
-            width=styles.Size.DEFAULT.value
+            width=styles.Size.LARGE.value
         ),
         href=url,
         text=text,

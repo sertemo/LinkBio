@@ -8,14 +8,14 @@ def header() -> rx.Component:
     return rx.chakra.vstack(
         rx.chakra.hstack(
             rx.chakra.avatar(
-                src='img/stm_logo.png',
+                src='img/new_logo_stm.png',
                 name='Sergio Tejedor',
                 size='xl',
                 color=TextColor.BODY.value,
                 bg=Color.CONTENT.value,
                 padding='4px',
-                #border='4px',
-                #border_color=Color.SECONDARY.value,
+                border='4px',
+                border_color=Color.SECONDARY.value,
                 ),          
             rx.chakra.vstack(
                 rx.chakra.heading(
@@ -24,11 +24,15 @@ def header() -> rx.Component:
                 rx.chakra.text(
                     '@TejedorMoreno',
                     margin_top=styles.Size.ZERO.value,
-                    color=TextColor.BODY.value),
+                    color=Color.SECONDARY.value),
                 rx.chakra.hstack(
-                    link_icon('http://github.com/sertemo', 'GitHub'),
-                    link_icon('http://github.com/sertemo', 'Linkdin'),
-                    spacing=styles.Size.BIG.value,
+                    link_icon('http://github.com/sertemo', 
+                                'GitHub',
+                                'icons/github.svg'),
+                    link_icon('http://github.com/sertemo', 
+                                'Linkdin',
+                                'icons/linkedin.svg'),
+                    spacing=styles.Size.MEDIUM.value,
                 ),
                 align_items='start',
             ),

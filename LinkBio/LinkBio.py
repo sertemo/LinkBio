@@ -60,6 +60,7 @@ def abrir_markdown() -> str:
 
 
 app = rx.App(
+    stylesheets=styles.STYLESHEETS,
     style=styles.BASE_STYLES
 )
 # app.add_page(index, route='/') Si ponemos el decorador ya no hace falta esto
