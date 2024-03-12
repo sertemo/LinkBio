@@ -8,7 +8,7 @@ def header() -> rx.Component:
     return rx.chakra.vstack(
         rx.chakra.hstack(
             rx.chakra.avatar(
-                src='img/new_logo_stm.png',
+                src='img/logo STM inverted colors.jpg',
                 name='Sergio Tejedor',
                 size='xl',
                 color=TextColor.BODY.value,

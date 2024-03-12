@@ -22,8 +22,11 @@ def link_button(titulo: str,
                                     style=styles.BUTTON_BODY_STYLES),
                     spacing=styles.Size.ZERO.value,
                     align_items='start',
-                    margin=styles.Size.ZERO.value
+                    margin=styles.Size.ZERO.value,
+                    padding_y=styles.Size.SMALL.value,
+                    padding_right=styles.Size.SMALL.value,
                 ),
+                width='100%'
             )
         ),
         href=url,

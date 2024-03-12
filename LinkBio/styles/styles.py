@@ -34,11 +34,12 @@ BASE_STYLES = {
     rx.chakra.Button: {
         'width': '100%',
         'height': '100%',
-        'display': 'block',
+        'white_space': 'normal', # para que pase a dos lineas; responsive
         'padding': Size.SMALL.value,
         'border_radius': Size.DEFAULT.value,
         'background_color': Color.CONTENT.value,
         'color': TextColor.HEADER.value,
+        'text_align': 'start',
         '_hover': {
             'background_color': Color.SECONDARY.value
         }
