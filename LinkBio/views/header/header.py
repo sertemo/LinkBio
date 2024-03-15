@@ -26,12 +26,18 @@ def header() -> rx.Component:
                     margin_top=styles.Size.ZERO.value,
                     color=Color.SECONDARY.value),
                 rx.chakra.hstack(
-                    link_icon('http://github.com/sertemo', 
-                                'GitHub',
-                                'icons/github.svg'),
-                    link_icon('http://github.com/sertemo', 
-                                'Linkdin',
-                                'icons/linkedin.svg'),
+                    link_icon(
+                        url='http://github.com/sertemo', 
+                        text='GitHub',
+                        image='icons/github.svg',
+                        alt='enlace a Github'
+                        ),
+                    link_icon(
+                        url='http://github.com/sertemo', 
+                        text='Linkdin',
+                        image='icons/linkedin.svg',
+                        alt='enlace a mi Linkedin'
+                        ),
                     spacing=styles.Size.MEDIUM.value,
                 ),
                 align_items='start',

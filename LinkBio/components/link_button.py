@@ -13,7 +13,8 @@ def link_button(titulo: str,
                     src=image,
                     width=styles.Size.BIG.value,
                     height=styles.Size.LARGE.value,
-                    margin=styles.Size.MEDIUM.value
+                    margin=styles.Size.MEDIUM.value,
+                    alt=titulo,
                     ),
                 rx.chakra.vstack(
                     rx.chakra.text(titulo, 
