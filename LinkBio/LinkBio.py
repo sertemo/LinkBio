@@ -15,7 +15,7 @@ class State(rx.State):
 @rx.page(
         route="/", 
         title='Bienvenido a Sergio Tejedor',
-        #description='Hola, mi nombre es Sergio Tejedor. Soy ingeniero industrial y me apasiona el Machine Learning y la creación de aplicaciones.',
+        description='Hola, mi nombre es Sergio Tejedor. Soy ingeniero industrial y me apasiona el Machine Learning y la creación de aplicaciones.',
         image='img/stm_logo.png')
 def index() -> rx.Component:
     return rx.chakra.box(
