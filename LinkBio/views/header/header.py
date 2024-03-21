@@ -33,7 +33,7 @@ def header() -> rx.Component:
                         alt='enlace a Github'
                         ),
                     link_icon(
-                        url='http://github.com/sertemo', 
+                        url='http://www.linkedin.com/in/sertemo', 
                         text='Linkdin',
                         image='icons/linkedin.svg',
                         alt='enlace a mi Linkedin'
