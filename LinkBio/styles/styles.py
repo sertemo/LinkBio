@@ -21,6 +21,11 @@ class Size(Enum):
     LARGE = '1.5em'
     BIG = '2em'
 
+class Pad(Enum):
+    SMALL = '4px'
+    DEFAULT = '8px'
+    LARGE = '16px'
+
 # Styles : Estilos para todos los componentes
 BASE_STYLES = {
     "font_family": Font.DEFAULT.value,

@@ -21,10 +21,14 @@ def header() -> rx.Component:
                 rx.chakra.heading(
                     'Sergio Tejedor',
                     ),
-                rx.chakra.text(
-                    '@TejedorMoreno',
-                    margin_top=styles.Size.ZERO.value,
-                    color=Color.SECONDARY.value),
+                rx.chakra.link(
+                    rx.chakra.text(
+                        '@TejedorMoreno',
+                        margin_top=styles.Size.ZERO.value,
+                        color=Color.SECONDARY.value),
+                        is_external=True,
+                        href='https://twitter.com/tejedormoreno'
+                ),
                 rx.chakra.hstack(
                     link_icon(
                         url='http://github.com/sertemo', 
@@ -65,5 +69,5 @@ def header() -> rx.Component:
                 font_size=styles.Size.MEDIUM.value
                 ),
         align_items='start',
-        spacing=styles.Size.BIG.value
+        spacing=styles.Size.BIG.value,        
     )
