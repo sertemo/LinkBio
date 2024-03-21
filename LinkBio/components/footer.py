@@ -2,16 +2,18 @@ import reflex as rx
 from datetime import datetime
 import LinkBio.styles.styles as styles
 from LinkBio.styles.styles import Color, TextColor
+from LinkBio.components.link_icon import link_icon
 
 
 def footer() -> rx.Component:
     return rx.chakra.box(
         rx.chakra.vstack(
-            rx.chakra.image(
-                src='favicon.ico',
-                html_width='40px',
-                html_height='auto'
-                ),
+            link_icon(
+                url='http://reflex.dev', 
+                text='Reflex',
+                image='icon_reflex.ico',
+                alt='enlace a la página de Reflex'
+                        ),
             rx.chakra.text(
             'Hecho con Reflex',
             font_size=styles.Size.MEDIUM.value,

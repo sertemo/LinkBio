@@ -5,6 +5,7 @@ from  LinkBio.components.navbar import navbar
 from LinkBio.views.header.header import header
 from LinkBio.components.footer import footer
 from LinkBio.views.links.links import links
+import LinkBio.utils as ut
 import LinkBio.styles.styles as styles
 
 class State(rx.State):
@@ -12,11 +13,7 @@ class State(rx.State):
 
 
 
-@rx.page(
-        route="/", 
-        title='Bienvenido a Sergio Tejedor',
-        description='Hola, mi nombre es Sergio Tejedor. Soy ingeniero industrial y me apasiona el Machine Learning y la creación de aplicaciones.',
-        image='img/stm_logo.png')
+@rx.page(**ut.index_page_config_dict)
 def index() -> rx.Component:
     return rx.chakra.box(
         navbar(),
