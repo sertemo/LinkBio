@@ -10,7 +10,7 @@ reflex export --frontend-only
 rm -rf public
 unzip frontend.zip -d public
 rm -f frontend.zip
-git add .
-git commit -m "automatizado"
-git push
+#git add .
+#git commit -m "automatizado"
+#git push
 #deactivate
