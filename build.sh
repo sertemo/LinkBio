@@ -2,7 +2,7 @@
 # y crear una carpeta public para subir a github
 # con todo el contenido del front para vincular
 # con vercel
-#source venv/bin/activate
+#source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 reflex init

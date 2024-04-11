@@ -5,5 +5,9 @@ Proyecto para probar el framework [Reflex](https://reflex.dev/) en el que crear√
 
 Se sigue el tutorial de Brais Moure: Curso de PYTHON para WEB desde cero en [youtube](https://www.youtube.com/watch?v=Kp4Mvapo5kc&ab_channel=MoureDevbyBraisMoure)
 
-Proyecto realizado desde el Samsung con Xubuntu.
+## Actualizaciones
+- 11/04/2024
+    - Se comienza el curso de Mouredev sobre Web Avanzado en [youtube](https://www.youtube.com/watch?v=bNy8OZJfA6I&t=680s&ab_channel=MoureDevbyBraisMoure)
+
+Proyecto realizado desde el Samsung con **Xubuntu**.
 

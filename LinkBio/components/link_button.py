@@ -4,7 +4,9 @@ import LinkBio.styles.styles as styles
 def link_button(titulo: str, 
                 body: str,
                 url: str,
-                image: str = 'icons/rocketchat.svg'
+                image: str = 'icons/rocketchat.svg',
+                *,
+                is_external: bool = True,
                 ) -> rx.Component:
     return rx.chakra.link(
         rx.chakra.button(
@@ -31,6 +33,6 @@ def link_button(titulo: str,
             )
         ),
         href=url,
-        is_external=True,
+        is_external=is_external,
         width='100%',
         )
