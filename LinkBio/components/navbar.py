@@ -2,6 +2,7 @@ import reflex as rx
 import LinkBio.styles.styles as styles
 from LinkBio.styles.styles import TextColor, Color
 from LinkBio.routes import Route
+from LinkBio.components.ant_components import float_button
 
 def navbar() -> rx.Component:
     return rx.chakra.hstack(
@@ -12,6 +13,11 @@ def navbar() -> rx.Component:
             style=styles.NAVBAR_TITLE_STYLE,            
             ),
             href=Route.INDEX.value
+        ),
+        float_button(
+            icon=rx.chakra.Image(src='/icons/question-solid.svg'),
+            href=Route.CV.value,
+            tooltip='Preguntas y respuestas'
         ),
         position='sticky',
         bg=Color.CONTENT.value,

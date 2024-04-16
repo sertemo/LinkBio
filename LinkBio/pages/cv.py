@@ -4,6 +4,7 @@ import reflex as rx
 
 import LinkBio.settings as settings
 import LinkBio.styles.styles as styles
+from LinkBio.styles.colors import TextColor
 from LinkBio.components.footer import footer
 from LinkBio.components.navbar import navbar
 from LinkBio.components.title import title
@@ -17,6 +18,11 @@ def cv() -> rx.Component:
         rx.chakra.center(
             rx.chakra.vstack(
                 title('mi CV'),
+                rx.chakra.text(
+                    'Sección actualmente en desarrollo',
+                    color=TextColor.BODY.value,
+                    size=styles.Size.BIG.value,
+                ),
                 max_width=styles.MAX_WIDTH,
                 width='100%',
                 margin_y=styles.Size.BIG.value,
@@ -25,6 +31,6 @@ def cv() -> rx.Component:
             ),
         ),        
         footer(),
-        height='100%',
+        height='100vh',
         margin_bottom=styles.Size.ZERO.value
     )

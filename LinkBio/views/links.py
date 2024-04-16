@@ -61,7 +61,7 @@ def links() -> rx.Component:
         link_button('Currículo',
                     'Accede a mi CV detallado',
                     Route.CV.value,
-                    'icons/keyboard-solid.svg',
+                    'icons/file-solid.svg',
                     is_external=False),
         width='100%',
         spacing=styles.Size.MEDIUM.value

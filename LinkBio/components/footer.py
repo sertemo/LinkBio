@@ -34,10 +34,11 @@ def footer() -> rx.Component:
                 font_size=styles.Size.MEDIUM.value,
                 margin_top=styles.Size.ZERO.value
                 ),
-            margin_bottom=styles.Size.BIG.value,
+            margin_bottom=styles.Size.ZERO.value,
             color=TextColor.FOOTER.value,
-            padding_bottom=styles.Size.BIG.value
+            padding_bottom=styles.Size.BIG.value,
+            height='100%'
         ),
         margin_top=styles.Size.BIG.value,
-        margin_bottom='0px'
+        margin_bottom=styles.Size.ZERO.value
     )
