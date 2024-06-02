@@ -17,8 +17,8 @@ def links() -> rx.Component:
                     settings.KOPURU_ARTICLE,
                     'icons/newspaper-solid.svg'
                     ),
-        link_button('Quijote GPT',
-                    'Decoder entrenado con el Quijote',
+        link_button('Littera GPT',
+                    'Decoder entrenado con literatura clásica española',
                     settings.QUIJOTE_APP,
                     'icons/i-cursor-solid.svg'
                     ),
@@ -35,7 +35,7 @@ def links() -> rx.Component:
                     'Caza futuros clientes',
                     settings.PROFILE_HUNTER_REPO,
                     'icons/bullseye-solid.svg'),
-        link_button('PesKa Mailing',
+        link_button('PsK Mailing',
                     'Lanza mails masivos con formato',
                     settings.TALSA_MAILING,
                     'icons/fish-fins-solid.svg'
