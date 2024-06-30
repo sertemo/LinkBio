@@ -5,3 +5,5 @@ from enum import Enum
 class Route(Enum):
     INDEX = "/"
     CV = "/cv"
+    BIBLIO = "/biblio"
+    APPS = "/apps"

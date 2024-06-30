@@ -4,6 +4,7 @@ import reflex as rx
 
 from LinkBio.pages.cv import cv
 from LinkBio.pages.index import index
+from LinkBio.pages.biblio import biblio
 import LinkBio.styles.styles as styles
 
 class State(rx.State):

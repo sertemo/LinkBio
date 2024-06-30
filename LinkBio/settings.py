@@ -1,12 +1,19 @@
 from LinkBio.routes import Route
 
 
-INDEX_DESCRIPTION = 'Hola, mi nombre es Sergio Tejedor. Soy ingeniero industrial y me apasiona el Machine Learning y la creación de aplicaciones.'
+INDEX_DESCRIPTION = (
+    'Hola, mi nombre es Sergio Tejedor. '
+    'Soy ingeniero industrial y me apasiona el Machine Learning '
+    ' y la creación de aplicaciones.'
+
+)
 INDEX_TITLE = 'Sergio Tejedor | Building Your Ideas'
 IMG_DESCRIPTION = 'img/stm_logo.png'
 
 CV_PAGE_DESCRIPTION = 'Mi CV'
 CV_PAGE_TITLE = 'Sergio Tejedor | Mi CV'
+BIBLIO_PAGE_TITLE = 'Bibliografía'
+BIBLIO_PAGE_DESCRIPTION = 'Libros leídos a día de hoy'
 
 # Configuración página principal
 index_page_config_dict = dict(
@@ -24,9 +31,20 @@ cv_page_config_dict = dict(
     image=IMG_DESCRIPTION
 )
 
+# Configuración de la página bibliografía
+biblio_page_config_dict = dict(
+    route=Route.BIBLIO.value,
+    title=BIBLIO_PAGE_TITLE,
+    description=BIBLIO_PAGE_DESCRIPTION,
+    image=IMG_DESCRIPTION
+)
+
 # Enlaces
 X_LINK = 'https://twitter.com/tejedormoreno'
 LINKEDIN_LINK = 'http://www.linkedin.com/in/sertemo'
+
+# Libros
+APRENDE_PYTHON = 'https://www.amazon.es/Aprende-Python-en-fin-semana/dp/1719884838'
 
 REFLEX_URL = 'http://reflex.dev'
 GITHUB_REPO = 'https://github.com/sertemo'

@@ -67,6 +67,14 @@ def links() -> rx.Component:
                     Route.CV.value,
                     'icons/file-solid.svg',
                     is_external=False),
+        title('Bibliografía'),
+        link_button(
+            "Bibliografía",
+            "Explora los libros que he leído hasta la fecha",
+            Route.BIBLIO.value,
+            'icons/book-solid.svg',
+            is_external=False
+        ),
         width='100%',
         spacing=styles.Size.MEDIUM.value
     )
