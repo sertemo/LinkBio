@@ -8,6 +8,7 @@ import os
 import signal
 import subprocess
 from concurrent import futures
+from pathlib import Path
 from typing import Callable, Generator, List, Optional, Tuple, Union
 
 import psutil
@@ -108,6 +109,33 @@ def change_port(port: str, _type: str) -> str:
     return new_port
 
 
+def handle_port(service_name: str, port: str, default_port: str) -> str:
+    """Change port if the specified port is in use and is not explicitly specified as a CLI arg or config arg.
+    otherwise tell the user the port is in use and exit the app.
+
+    We make an assumption that when port is the default port,then it hasnt been explicitly set since its not straightforward
+    to know whether a port was explicitly provided by the user unless its any other than the default.
+
+    Args:
+        service_name: The frontend or backend.
+        port: The provided port.
+        default_port: The default port number associated with the specified service.
+
+    Returns:
+        The port to run the service on.
+
+    Raises:
+        Exit:when the port is in use.
+    """
+    if is_process_on_port(port):
+        if int(port) == int(default_port):
+            return change_port(port, service_name)
+        else:
+            console.error(f"{service_name.capitalize()} port: {port} is already in use")
+            raise typer.Exit()
+    return port
+
+
 def new_process(args, run: bool = False, show_logs: bool = False, **kwargs):
     """Wrapper over subprocess.Popen to unify the launch of child processes.
 
@@ -136,7 +164,9 @@ def new_process(args, run: bool = False, show_logs: bool = False, **kwargs):
     # Add the node bin path to the PATH environment variable.
     env = {
         **os.environ,
-        "PATH": os.pathsep.join([node_bin_path if node_bin_path else "", os.environ["PATH"]]),  # type: ignore
+        "PATH": os.pathsep.join(
+            [node_bin_path if node_bin_path else "", os.environ["PATH"]]
+        ),  # type: ignore
         **kwargs.pop("env", {}),
     }
     kwargs = {
@@ -145,6 +175,7 @@ def new_process(args, run: bool = False, show_logs: bool = False, **kwargs):
         "stdout": None if show_logs else subprocess.PIPE,
         "universal_newlines": True,
         "encoding": "UTF-8",
+        "errors": "replace",  # Avoid UnicodeDecodeError in unknown command output
         **kwargs,
     }
     console.debug(f"Running command: {args}")
@@ -154,7 +185,7 @@ def new_process(args, run: bool = False, show_logs: bool = False, **kwargs):
 
 @contextlib.contextmanager
 def run_concurrently_context(
-    *fns: Union[Callable, Tuple]
+    *fns: Union[Callable, Tuple],
 ) -> Generator[list[futures.Future], None, None]:
     """Run functions concurrently in a thread pool.
 
@@ -202,13 +233,21 @@ def run_concurrently(*fns: Union[Callable, Tuple]) -> None:
         pass
 
 
-def stream_logs(message: str, process: subprocess.Popen, progress=None):
+def stream_logs(
+    message: str,
+    process: subprocess.Popen,
+    progress=None,
+    suppress_errors: bool = False,
+    analytics_enabled: bool = False,
+):
     """Stream the logs for a process.
 
     Args:
         message: The message to display.
         process: The process.
         progress: The ongoing progress bar if one is being used.
+        suppress_errors: If True, do not exit if errors are encountered (for fallback).
+        analytics_enabled: Whether analytics are enabled for this command.
 
     Yields:
         The lines of the process output.
@@ -216,6 +255,8 @@ def stream_logs(message: str, process: subprocess.Popen, progress=None):
     Raises:
         Exit: If the process failed.
     """
+    from reflex.utils import telemetry
+
     # Store the tail of the logs.
     logs = collections.deque(maxlen=512)
     with process:
@@ -232,10 +273,12 @@ def stream_logs(message: str, process: subprocess.Popen, progress=None):
     # Windows uvicorn bug
     # https://github.com/reflex-dev/reflex/issues/2335
     accepted_return_codes = [0, -2, 15] if constants.IS_WINDOWS else [0, -2]
-    if process.returncode not in accepted_return_codes:
+    if process.returncode not in accepted_return_codes and not suppress_errors:
         console.error(f"{message} failed with exit code {process.returncode}")
         for line in logs:
             console.error(line, end="")
+        if analytics_enabled:
+            telemetry.send("error", context=message)
         console.error("Run with [bold]--loglevel debug [/bold] for the full log.")
         raise typer.Exit(1)
 
@@ -251,15 +294,27 @@ def show_logs(message: str, process: subprocess.Popen):
         pass
 
 
-def show_status(message: str, process: subprocess.Popen):
+def show_status(
+    message: str,
+    process: subprocess.Popen,
+    suppress_errors: bool = False,
+    analytics_enabled: bool = False,
+):
     """Show the status of a process.
 
     Args:
         message: The initial message to display.
         process: The process.
+        suppress_errors: If True, do not exit if errors are encountered (for fallback).
+        analytics_enabled: Whether analytics are enabled for this command.
     """
     with console.status(message) as status:
-        for line in stream_logs(message, process):
+        for line in stream_logs(
+            message,
+            process,
+            suppress_errors=suppress_errors,
+            analytics_enabled=analytics_enabled,
+        ):
             status.update(f"{message} {line}")
 
 
@@ -287,3 +342,83 @@ def show_progress(message: str, process: subprocess.Popen, checkpoints: List[str
 def atexit_handler():
     """Display a custom message with the current time when exiting an app."""
     console.log("Reflex app stopped.")
+
+
+def get_command_with_loglevel(command: list[str]) -> list[str]:
+    """Add the right loglevel flag to the designated command.
+     npm uses --loglevel <level>, Bun doesnt use the --loglevel flag and
+     runs in debug mode by default.
+
+    Args:
+        command:The command to add loglevel flag.
+
+    Returns:
+        The updated command list
+    """
+    npm_path = path_ops.get_npm_path()
+    npm_path = str(Path(npm_path).resolve()) if npm_path else npm_path
+
+    if command[0] == npm_path:
+        return command + ["--loglevel", "silly"]
+    return command
+
+
+def run_process_with_fallback(
+    args,
+    *,
+    show_status_message,
+    fallback=None,
+    analytics_enabled: bool = False,
+    **kwargs,
+):
+    """Run subprocess and retry using fallback command if initial command fails.
+
+    Args:
+        args: A string, or a sequence of program arguments.
+        show_status_message: The status message to be displayed in the console.
+        fallback: The fallback command to run.
+        analytics_enabled: Whether analytics are enabled for this command.
+        kwargs: Kwargs to pass to new_process function.
+    """
+    process = new_process(get_command_with_loglevel(args), **kwargs)
+    if fallback is None:
+        # No fallback given, or this _is_ the fallback command.
+        show_status(
+            show_status_message,
+            process,
+            analytics_enabled=analytics_enabled,
+        )
+    else:
+        # Suppress errors for initial command, because we will try to fallback
+        show_status(show_status_message, process, suppress_errors=True)
+        if process.returncode != 0:
+            # retry with fallback command.
+            fallback_args = [fallback, *args[1:]]
+            console.warn(
+                f"There was an error running command: {args}. Falling back to: {fallback_args}."
+            )
+            run_process_with_fallback(
+                fallback_args,
+                show_status_message=show_status_message,
+                fallback=None,
+                analytics_enabled=analytics_enabled,
+                **kwargs,
+            )
+
+
+def execute_command_and_return_output(command) -> str | None:
+    """Execute a command and return the output.
+
+    Args:
+        command: The command to run.
+
+    Returns:
+        The output of the command.
+    """
+    try:
+        return subprocess.check_output(command, shell=True).decode().strip()
+    except subprocess.SubprocessError as err:
+        console.error(
+            f"The command `{command}` failed with error: {err}. This will return None."
+        )
+        return None

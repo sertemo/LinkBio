@@ -1,4 +1,5 @@
 """An icon component."""
+
 from typing import List
 
 from reflex.components.chakra import ChakraComponent
@@ -37,9 +38,9 @@ class Icon(ChakraIconComponent):
             raise AttributeError(
                 f"Passing children to Icon component is not allowed: remove positional arguments {children} to fix"
             )
-        if "tag" not in props.keys():
+        if "tag" not in props:
             raise AttributeError("Missing 'tag' keyword-argument for Icon")
-        if type(props["tag"]) != str or props["tag"].lower() not in ICON_LIST:
+        if not isinstance(props["tag"], str) or props["tag"].lower() not in ICON_LIST:
             raise ValueError(
                 f"Invalid icon tag: {props['tag']}. Please use one of the following: {sorted(ICON_LIST)}"
             )

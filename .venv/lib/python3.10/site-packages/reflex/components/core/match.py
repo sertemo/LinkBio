@@ -8,8 +8,9 @@ from reflex.components.component import BaseComponent, Component, MemoizationLea
 from reflex.components.core.colors import Color
 from reflex.components.tags import MatchTag, Tag
 from reflex.style import Style
-from reflex.utils import format, imports, types
+from reflex.utils import format, types
 from reflex.utils.exceptions import MatchTypeError
+from reflex.utils.imports import ImportDict
 from reflex.vars import BaseVar, Var, VarData
 
 
@@ -67,7 +68,7 @@ class Match(MemoizationLeaf):
         Raises:
             ValueError: If the condition is not provided.
         """
-        match_cond_var = Var.create(cond, _var_is_string=type(cond) is str)
+        match_cond_var = Var.create(cond, _var_is_string=isinstance(cond, str))
 
         if match_cond_var is None:
             raise ValueError("The condition must be set")
@@ -119,7 +120,7 @@ class Match(MemoizationLeaf):
         _var_data = case_element._var_data if isinstance(case_element, Style) else None  # type: ignore
         case_element = Var.create(
             case_element,
-            _var_is_string=type(case_element) is str or isinstance(case_element, Color),
+            _var_is_string=isinstance(case_element, (str, Color)),
         )
         if _var_data is not None:
             case_element._var_data = VarData.merge(case_element._var_data, _var_data)  # type: ignore
@@ -268,23 +269,13 @@ class Match(MemoizationLeaf):
         tag.name = "match"
         return dict(tag)
 
-    def _get_imports(self) -> imports.ImportDict:
-        return imports.merge_imports(
-            super()._get_imports(),
-            getattr(self.cond._var_data, "imports", {}),
-        )
+    def add_imports(self) -> ImportDict:
+        """Add imports for the Match component.
 
-    def _apply_theme(self, theme: Component):
-        """Apply the theme to this component.
-
-        Args:
-            theme: The theme to apply.
+        Returns:
+            The import dict.
         """
-        # apply theme to return components.
-        for match_case in self.match_cases:
-            if isinstance(match_case[-1], Component):
-                match_case[-1].apply_theme(theme)
+        return getattr(self.cond._var_data, "imports", {})
 
-        # apply theme to default component
-        if isinstance(self.default, Component):
-            self.default.apply_theme(theme)
+
+match = Match.create

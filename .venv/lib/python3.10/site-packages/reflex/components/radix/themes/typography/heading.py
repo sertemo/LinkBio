@@ -2,9 +2,10 @@
 
 https://www.radix-ui.com/themes/docs/theme/typography
 """
+
 from __future__ import annotations
 
-from reflex import el
+from reflex.components.el import elements
 from reflex.vars import Var
 
 from ..base import (
@@ -19,7 +20,7 @@ from .base import (
 )
 
 
-class Heading(el.H1, RadixThemesComponent):
+class Heading(elements.H1, RadixThemesComponent):
     """A foundational text primitive based on the <span> element."""
 
     tag = "Heading"
@@ -47,3 +48,6 @@ class Heading(el.H1, RadixThemesComponent):
 
     # Whether to render the text with higher contrast color
     high_contrast: Var[bool]
+
+
+heading = Heading.create

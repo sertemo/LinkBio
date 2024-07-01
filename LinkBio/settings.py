@@ -45,6 +45,9 @@ LINKEDIN_LINK = 'http://www.linkedin.com/in/sertemo'
 
 # Libros
 APRENDE_PYTHON = 'https://www.amazon.es/Aprende-Python-en-fin-semana/dp/1719884838'
+PYTHON_AVANZADO = 'https://www.amazon.es/Python-avanzado-en-fin-semana/dp/B08XLGJQQG/ref=pd_bxgy_thbs_d_sccl_1/260-4039577-9140322?pd_rd_w=eEYcU&content-id=amzn1.sym.cfceebff-276b-4b67-ad06-735b2f4350ee&pf_rd_p=cfceebff-276b-4b67-ad06-735b2f4350ee&pf_rd_r=TVPZ787ARCFBE5SEZ9S8&pd_rd_wg=sJQKM&pd_rd_r=d9c4c8b4-ff35-4fc7-83a6-0862bddf0ec2&pd_rd_i=B08XLGJQQG&psc=1'
+SQL = 'https://amzn.eu/d/0iE9skxx'
+
 
 REFLEX_URL = 'http://reflex.dev'
 GITHUB_REPO = 'https://github.com/sertemo'

@@ -7,16 +7,15 @@ from typing import Any, Dict, Literal, Optional, Union, overload
 from reflex.vars import Var, BaseVar, ComputedVar
 from reflex.event import EventChain, EventHandler, EventSpec
 from reflex.style import Style
-from typing import Any, Literal, Union
+from typing import Literal
 from reflex.components.chakra import ChakraComponent, LiteralChakraDirection
 from reflex.components.component import Component
-from reflex.constants import EventTriggers
+from reflex.event import EventHandler
 from reflex.vars import Var
 
 LiteralLayout = Literal["horizontal", "vertical"]
 
 class Slider(ChakraComponent):
-    def get_event_triggers(self) -> dict[str, Union[Var, Any]]: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -219,9 +218,6 @@ class SliderTrack(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -298,9 +294,6 @@ class SliderFilledTrack(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -379,9 +372,6 @@ class SliderThumb(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -458,8 +448,5 @@ class SliderMark(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...

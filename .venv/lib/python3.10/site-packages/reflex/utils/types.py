@@ -4,16 +4,18 @@ from __future__ import annotations
 
 import contextlib
 import inspect
+import sys
 import types
 from functools import wraps
 from typing import (
-    TYPE_CHECKING,
     Any,
     Callable,
+    Dict,
     Iterable,
     List,
     Literal,
     Optional,
+    Tuple,
     Type,
     Union,
     _GenericAlias,  # type: ignore
@@ -25,23 +27,38 @@ from typing import (
 import sqlalchemy
 
 try:
-    # TODO The type checking guard can be removed once
-    # reflex-hosting-cli tools are compatible with pydantic v2
-
-    if not TYPE_CHECKING:
-        import pydantic.v1.fields as ModelField
-    else:
-        raise ModuleNotFoundError
+    from pydantic.v1.fields import ModelField
 except ModuleNotFoundError:
-    from pydantic.fields import ModelField
+    from pydantic.fields import ModelField  # type: ignore
 
 from sqlalchemy.ext.associationproxy import AssociationProxyInstance
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import DeclarativeBase, Mapped, QueryableAttribute, Relationship
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    QueryableAttribute,
+    Relationship,
+)
 
 from reflex import constants
 from reflex.base import Base
-from reflex.utils import serializers
+from reflex.utils import console
+
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+
+    def override(func: Callable) -> Callable:
+        """Fallback for @override decorator.
+
+        Args:
+            func: The function to decorate.
+
+        Returns:
+            The unmodified function.
+        """
+        return func
+
 
 # Potential GenericAlias types for isinstance checks.
 GenericAliasTypes = [_GenericAlias]
@@ -74,6 +91,13 @@ StateIterVar = Union[list, set, tuple]
 
 # ArgsSpec = Callable[[Var], list[Var]]
 ArgsSpec = Callable
+
+
+PrimitiveToAnnotation = {
+    list: List,
+    tuple: Tuple,
+    dict: Dict,
+}
 
 
 class Unset:
@@ -109,6 +133,18 @@ def is_generic_alias(cls: GenericType) -> bool:
         Whether the class is a generic alias.
     """
     return isinstance(cls, GenericAliasTypes)
+
+
+def is_none(cls: GenericType) -> bool:
+    """Check if a class is None.
+
+    Args:
+        cls: The class to check.
+
+    Returns:
+        Whether the class is None.
+    """
+    return cls is type(None) or cls is None
 
 
 def is_union(cls: GenericType) -> bool:
@@ -179,7 +215,11 @@ def get_attribute_access_type(cls: GenericType, name: str) -> GenericType | None
     attr = getattr(cls, name, None)
     if hint := get_property_hint(attr):
         return hint
-    if hasattr(cls, "__fields__") and name in cls.__fields__:
+    if (
+        hasattr(cls, "__fields__")
+        and name in cls.__fields__
+        and hasattr(cls.__fields__[name], "outer_type_")
+    ):
         # pydantic models
         field = cls.__fields__[name]
         type_ = field.outer_type_
@@ -192,8 +232,20 @@ def get_attribute_access_type(cls: GenericType, name: str) -> GenericType | None
     elif isinstance(cls, type) and issubclass(cls, DeclarativeBase):
         insp = sqlalchemy.inspect(cls)
         if name in insp.columns:
-            return insp.columns[name].type.python_type
-        if name not in insp.all_orm_descriptors.keys():
+            # check for list types
+            column = insp.columns[name]
+            column_type = column.type
+            type_ = insp.columns[name].type.python_type
+            if hasattr(column_type, "item_type") and (
+                item_type := column_type.item_type.python_type  # type: ignore
+            ):
+                if type_ in PrimitiveToAnnotation:
+                    type_ = PrimitiveToAnnotation[type_]  # type: ignore
+                type_ = type_[item_type]  # type: ignore
+            if column.nullable:
+                type_ = Optional[type_]
+            return type_
+        if name not in insp.all_orm_descriptors:
             return None
         descriptor = insp.all_orm_descriptors[name]
         if hint := get_property_hint(descriptor):
@@ -202,11 +254,10 @@ def get_attribute_access_type(cls: GenericType, name: str) -> GenericType | None
             prop = descriptor.property
             if not isinstance(prop, Relationship):
                 return None
-            class_ = prop.mapper.class_
-            if prop.uselist:
-                return List[class_]
-            else:
-                return class_
+            type_ = prop.mapper.class_
+            # TODO: check for nullable?
+            type_ = List[type_] if prop.uselist else Optional[type_]
+            return type_
         if isinstance(attr, AssociationProxyInstance):
             return List[
                 get_attribute_access_type(
@@ -232,6 +283,19 @@ def get_attribute_access_type(cls: GenericType, name: str) -> GenericType | None
             if type_ is not None:
                 # Return the first attribute type that is accessible.
                 return type_
+    elif isinstance(cls, type):
+        # Bare class
+        if sys.version_info >= (3, 10):
+            exceptions = NameError
+        else:
+            exceptions = (NameError, TypeError)
+        try:
+            hints = get_type_hints(cls)
+            if name in hints:
+                return hints[name]
+        except exceptions as e:
+            console.warn(f"Failed to resolve ForwardRefs for {cls}.{name} due to {e}")
+            pass
     return None  # Attribute is not accessible.
 
 
@@ -332,6 +396,8 @@ def is_valid_var_type(type_: Type) -> bool:
     Returns:
         Whether the type is a valid prop type.
     """
+    from reflex.utils import serializers
+
     if is_union(type_):
         return all((is_valid_var_type(arg) for arg in get_args(type_)))
     return _issubclass(type_, StateVar) or serializers.has_serializer(type_)
@@ -443,7 +509,7 @@ def validate_parameter_literals(func):
         annotations = {param[0]: param[1].annotation for param in func_params}
 
         # validate args
-        for param, arg in zip(annotations.keys(), args):
+        for param, arg in zip(annotations, args):
             if annotations[param] is inspect.Parameter.empty:
                 continue
             validate_literal(param, arg, annotations[param], func.__name__)

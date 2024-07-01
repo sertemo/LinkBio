@@ -4,6 +4,8 @@ otro enlace referido"""
 
 import reflex as rx
 
+from PIL import Image
+
 import LinkBio.settings as settings
 import LinkBio.styles.styles as styles
 from LinkBio.styles.colors import TextColor
@@ -29,8 +31,20 @@ def biblio() -> rx.Component:
                 link_button(
                     "Aprende Python en un fin de semana",
                     "Alfredo Moreno Muñoz & Sheila Córcoles Córcoles",
-                    url=settings.APRENDE_PYTHON,
-                    image="img/aprende_python.jpg",
+                    settings.APRENDE_PYTHON,
+                    Image.open("assets/icons/aprende_python.ico"),
+                ),
+                link_button(
+                    "Python avanzado en un fin de semana",
+                    "Alfredo Moreno Muñoz & Sheila Córcoles Córcoles",
+                    settings.PYTHON_AVANZADO,
+                    Image.open("assets/icons/aprende_python.ico"),
+                ),
+                link_button(
+                    "Aprende SQL en un fin de semana",
+                    "Antonio Padial Solier",
+                    settings.SQL,
+                    Image.open("assets/img/sql_fin_de_semana.jpg"),
                 ),
                 max_width=styles.MAX_WIDTH,
                 width='100%',

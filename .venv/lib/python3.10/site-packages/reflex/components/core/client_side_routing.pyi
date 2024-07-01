@@ -15,6 +15,7 @@ from reflex.vars import Var
 route_not_found: Var
 
 class ClientSideRouting(Component):
+    def add_hooks(self) -> list[str]: ...
     def render(self) -> str: ...
     @overload
     @classmethod
@@ -88,9 +89,6 @@ class ClientSideRouting(Component):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -170,8 +168,5 @@ class Default404Page(Component):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...

@@ -7,11 +7,11 @@ from typing import Any, Dict, Literal, Optional, Union, overload
 from reflex.vars import Var, BaseVar, ComputedVar
 from reflex.event import EventChain, EventHandler, EventSpec
 from reflex.style import Style
-from typing import Any, Dict, Literal
-from reflex.components.component import Component, ComponentNamespace
+from typing import Any, Literal
+from reflex.components.component import ComponentNamespace
 from reflex.components.el.elements.forms import Form as HTMLForm
-from reflex.components.radix.themes.components.text_field import TextFieldInput
-from reflex.constants.event import EventTriggers
+from reflex.components.radix.themes.components.text_field import TextFieldRoot
+from reflex.event import EventHandler
 from reflex.vars import Var
 from .base import RadixPrimitiveComponentWithClassName
 
@@ -90,14 +90,11 @@ class FormComponent(RadixPrimitiveComponentWithClassName):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
 class FormRoot(FormComponent, HTMLForm):
-    def get_event_triggers(self) -> Dict[str, Any]: ...
+    def add_style(self) -> dict[str, Any] | None: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -276,6 +273,7 @@ class FormRoot(FormComponent, HTMLForm):
         ...
 
 class FormField(FormComponent):
+    def add_style(self) -> dict[str, Any] | None: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -354,13 +352,11 @@ class FormField(FormComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
 class FormLabel(FormComponent):
+    def add_style(self) -> dict[str, Any] | None: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -435,9 +431,6 @@ class FormLabel(FormComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -537,6 +530,7 @@ LiteralMatcher = Literal[
 ]
 
 class FormMessage(FormComponent):
+    def add_style(self) -> dict[str, Any] | None: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -646,9 +640,6 @@ class FormMessage(FormComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -727,9 +718,6 @@ class FormValidityState(FormComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -808,9 +796,6 @@ class FormSubmit(FormComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 

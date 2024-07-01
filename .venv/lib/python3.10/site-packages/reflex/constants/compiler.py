@@ -12,7 +12,7 @@ from reflex.utils.imports import ImportVar
 SETTER_PREFIX = "set_"
 
 # The file used to specify no compilation.
-NOCOMPILE_FILE = ".web/nocompile"
+NOCOMPILE_FILE = "nocompile"
 
 
 class Ext(SimpleNamespace):
@@ -26,6 +26,8 @@ class Ext(SimpleNamespace):
     CSS = ".css"
     # The extension for zip files.
     ZIP = ".zip"
+    # The extension for executable files on Windows.
+    EXE = ".exe"
 
 
 class CompileVars(SimpleNamespace):
@@ -78,6 +80,8 @@ class PageNames(SimpleNamespace):
     DOCUMENT_ROOT = "_document"
     # The name of the theme page.
     THEME = "theme"
+    # The module containing components.
+    COMPONENTS = "components"
     # The module containing shared stateful components
     STATEFUL_COMPONENTS = "stateful_components"
 
@@ -101,9 +105,9 @@ class Imports(SimpleNamespace):
     """Common sets of import vars."""
 
     EVENTS = {
-        "react": {ImportVar(tag="useContext")},
-        f"/{Dirs.CONTEXTS_PATH}": {ImportVar(tag="EventLoopContext")},
-        f"/{Dirs.STATE_PATH}": {ImportVar(tag=CompileVars.TO_EVENT)},
+        "react": [ImportVar(tag="useContext")],
+        f"/{Dirs.CONTEXTS_PATH}": [ImportVar(tag="EventLoopContext")],
+        f"/{Dirs.STATE_PATH}": [ImportVar(tag=CompileVars.TO_EVENT)],
     }
 
 

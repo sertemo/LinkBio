@@ -1,7 +1,8 @@
 """Interactive components provided by @radix-ui/themes."""
+
 from typing import Literal
 
-from reflex import el
+from reflex.components.el import elements
 from reflex.vars import Var
 
 from ..base import (
@@ -9,7 +10,7 @@ from ..base import (
 )
 
 
-class Card(el.Div, RadixThemesComponent):
+class Card(elements.Div, RadixThemesComponent):
     """Container that groups related content and actions."""
 
     tag = "Card"

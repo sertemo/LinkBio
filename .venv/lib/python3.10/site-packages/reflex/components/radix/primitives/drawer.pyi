@@ -7,12 +7,12 @@ from typing import Any, Dict, Literal, Optional, Union, overload
 from reflex.vars import Var, BaseVar, ComputedVar
 from reflex.event import EventChain, EventHandler, EventSpec
 from reflex.style import Style
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, List, Literal, Optional, Union
 from reflex.components.component import Component, ComponentNamespace
 from reflex.components.radix.primitives.base import RadixPrimitiveComponent
 from reflex.components.radix.themes.base import Theme
 from reflex.components.radix.themes.layout.flex import Flex
-from reflex.constants import EventTriggers
+from reflex.event import EventHandler
 from reflex.vars import Var
 
 class DrawerComponent(RadixPrimitiveComponent):
@@ -90,16 +90,12 @@ class DrawerComponent(RadixPrimitiveComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
 LiteralDirectionType = Literal["top", "bottom", "left", "right"]
 
 class DrawerRoot(DrawerComponent):
-    def get_event_triggers(self) -> Dict[str, Any]: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -200,9 +196,6 @@ class DrawerRoot(DrawerComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -352,14 +345,10 @@ class DrawerPortal(DrawerComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
 class DrawerContent(DrawerComponent):
-    def get_event_triggers(self) -> Dict[str, Any]: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -531,9 +520,6 @@ class DrawerOverlay(DrawerComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -683,9 +669,6 @@ class DrawerTitle(DrawerComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -764,9 +747,6 @@ class DrawerDescription(DrawerComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -878,9 +858,6 @@ class Drawer(ComponentNamespace):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 

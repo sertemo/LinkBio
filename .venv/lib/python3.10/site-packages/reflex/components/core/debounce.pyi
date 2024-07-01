@@ -7,9 +7,10 @@ from typing import Any, Dict, Literal, Optional, Union, overload
 from reflex.vars import Var, BaseVar, ComputedVar
 from reflex.event import EventChain, EventHandler, EventSpec
 from reflex.style import Style
-from typing import Any, Type
+from typing import Any, Type, Union
 from reflex.components.component import Component
 from reflex.constants import EventTriggers
+from reflex.event import EventHandler
 from reflex.vars import Var, VarData
 
 DEFAULT_DEBOUNCE_TIMEOUT = 300
@@ -24,7 +25,9 @@ class DebounceInput(Component):
         debounce_timeout: Optional[Union[Var[int], int]] = None,
         force_notify_by_enter: Optional[Union[Var[bool], bool]] = None,
         force_notify_on_blur: Optional[Union[Var[bool], bool]] = None,
-        value: Optional[Union[Var[str], str]] = None,
+        value: Optional[
+            Union[Var[Union[str, int, float]], Union[str, int, float]]
+        ] = None,
         input_ref: Optional[Union[Var[str], str]] = None,
         element: Optional[Union[Var[Type[Component]], Type[Component]]] = None,
         style: Optional[Style] = None,
@@ -103,4 +106,5 @@ class DebounceInput(Component):
             ValueError: if the child element does not have an on_change handler.
         """
         ...
-    def get_event_triggers(self) -> dict[str, Any]: ...
+
+debounce_input = DebounceInput.create

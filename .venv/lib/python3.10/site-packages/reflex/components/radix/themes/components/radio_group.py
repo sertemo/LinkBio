@@ -1,13 +1,14 @@
 """Interactive components provided by @radix-ui/themes."""
+
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import List, Literal, Optional, Union
 
 import reflex as rx
 from reflex.components.component import Component, ComponentNamespace
 from reflex.components.radix.themes.layout.flex import Flex
 from reflex.components.radix.themes.typography.text import Text
-from reflex.constants import EventTriggers
+from reflex.event import EventHandler
 from reflex.vars import Var
 
 from ..base import (
@@ -25,10 +26,12 @@ class RadioGroupRoot(RadixThemesComponent):
     tag = "RadioGroup.Root"
 
     # The size of the radio group: "1" | "2" | "3"
-    size: Var[Literal["1", "2", "3"]]
+    size: Var[Literal["1", "2", "3"]] = Var.create_safe("2", _var_is_string=True)
 
     # The variant of the radio group
-    variant: Var[Literal["classic", "surface", "soft"]]
+    variant: Var[Literal["classic", "surface", "soft"]] = Var.create_safe(
+        "classic", _var_is_string=True
+    )
 
     # The color of the radio group
     color_scheme: Var[LiteralAccentColor]
@@ -54,16 +57,8 @@ class RadioGroupRoot(RadixThemesComponent):
     # Props to rename
     _rename_props = {"onChange": "onValueChange"}
 
-    def get_event_triggers(self) -> Dict[str, Any]:
-        """Get the events triggers signatures for the component.
-
-        Returns:
-            The signatures of the event triggers.
-        """
-        return {
-            **super().get_event_triggers(),
-            EventTriggers.ON_CHANGE: lambda e0: [e0],
-        }
+    # Fired when the value of the radio group changes.
+    on_change: EventHandler[lambda e0: [e0]]
 
 
 class RadioGroupItem(RadixThemesComponent):
@@ -88,16 +83,20 @@ class HighLevelRadioGroup(RadixThemesComponent):
     items: Var[List[str]]
 
     # The direction of the radio group.
-    direction: Var[LiteralFlexDirection]
+    direction: Var[LiteralFlexDirection] = Var.create_safe(
+        "column", _var_is_string=True
+    )
 
     # The gap between the items of the radio group.
-    spacing: Var[LiteralSpacing] = Var.create_safe("2")
+    spacing: Var[LiteralSpacing] = Var.create_safe("2", _var_is_string=True)
 
     # The size of the radio group.
-    size: Var[Literal["1", "2", "3"]] = Var.create_safe("2")
+    size: Var[Literal["1", "2", "3"]] = Var.create_safe("2", _var_is_string=True)
 
     # The variant of the radio group
-    variant: Var[Literal["classic", "surface", "soft"]]
+    variant: Var[Literal["classic", "surface", "soft"]] = Var.create_safe(
+        "classic", _var_is_string=True
+    )
 
     # The color of the radio group
     color_scheme: Var[LiteralAccentColor]
@@ -141,23 +140,27 @@ class HighLevelRadioGroup(RadixThemesComponent):
         direction = props.pop("direction", "column")
         spacing = props.pop("spacing", "2")
         size = props.pop("size", "2")
+        variant = props.pop("variant", "classic")
+        color_scheme = props.pop("color_scheme", None)
         default_value = props.pop("default_value", "")
+
+        default_value = Var.create(default_value)
 
         # convert only non-strings to json(JSON.stringify) so quotes are not rendered
         # for string literal types.
-        if (
-            type(default_value) is str
-            or isinstance(default_value, Var)
-            and default_value._var_type is str
+        if isinstance(default_value, str) or (
+            isinstance(default_value, Var) and default_value._var_type is str
         ):
             default_value = Var.create(default_value, _var_is_string=True)  # type: ignore
         else:
             default_value = (
-                Var.create(default_value).to_string()._replace(_var_is_local=False)  # type: ignore
+                Var.create(default_value, _var_is_string=False)
+                .to_string()  # type: ignore
+                ._replace(_var_is_local=False)
             )
 
         def radio_group_item(value: str | Var) -> Component:
-            item_value = Var.create(value)  # type: ignore
+            item_value = Var.create(value, _var_is_string=False)  # type: ignore
             item_value = rx.cond(
                 item_value._type() == str,  # type: ignore
                 item_value,
@@ -166,7 +169,10 @@ class HighLevelRadioGroup(RadixThemesComponent):
 
             return Text.create(
                 Flex.create(
-                    RadioGroupItem.create(value=item_value),
+                    RadioGroupItem.create(
+                        value=item_value,
+                        disabled=props.get("disabled", Var.create(False)),
+                    ),
                     item_value,
                     spacing="2",
                 ),
@@ -184,6 +190,8 @@ class HighLevelRadioGroup(RadixThemesComponent):
                 spacing=spacing,
             ),
             size=size,
+            variant=variant,
+            color_scheme=color_scheme,
             default_value=default_value,
             **props,
         )

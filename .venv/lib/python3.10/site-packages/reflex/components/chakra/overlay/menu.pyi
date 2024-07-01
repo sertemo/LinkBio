@@ -7,7 +7,7 @@ from typing import Any, Dict, Literal, Optional, Union, overload
 from reflex.vars import Var, BaseVar, ComputedVar
 from reflex.event import EventChain, EventHandler, EventSpec
 from reflex.style import Style
-from typing import Any, List, Optional, Union
+from typing import List, Optional
 from reflex.components.chakra import (
     ChakraComponent,
     LiteralChakraDirection,
@@ -16,10 +16,10 @@ from reflex.components.chakra import (
 )
 from reflex.components.chakra.forms.button import Button
 from reflex.components.component import Component
+from reflex.event import EventHandler
 from reflex.vars import Var
 
 class Menu(ChakraComponent):
-    def get_event_triggers(self) -> dict[str, Union[Var, Any]]: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -218,9 +218,6 @@ class MenuButton(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -385,9 +382,6 @@ class MenuItem(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -482,9 +476,6 @@ class MenuItemOption(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -561,9 +552,6 @@ class MenuGroup(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -646,9 +634,6 @@ class MenuOptionGroup(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -725,8 +710,5 @@ class MenuDivider(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
