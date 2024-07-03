@@ -9,18 +9,20 @@ from reflex.event import EventChain, EventHandler, EventSpec
 from reflex.style import Style
 from typing import Literal
 from reflex.components.component import Component, MemoizationLeaf
+from reflex.components.core.colors import color
 from reflex.components.core.cond import cond
 from reflex.components.el.elements.inline import A
 from reflex.components.next.link import NextLink
-from reflex.utils import imports
+from reflex.utils.imports import ImportDict
 from reflex.vars import Var
 from ..base import LiteralAccentColor, RadixThemesComponent
 from .base import LiteralTextSize, LiteralTextTrim, LiteralTextWeight
 
-LiteralLinkUnderline = Literal["auto", "hover", "always"]
+LiteralLinkUnderline = Literal["auto", "hover", "always", "none"]
 next_link = NextLink.create()
 
 class Link(RadixThemesComponent, A, MemoizationLeaf):
+    def add_imports(self) -> ImportDict: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -47,8 +49,8 @@ class Link(RadixThemesComponent, A, MemoizationLeaf):
         ] = None,
         underline: Optional[
             Union[
-                Var[Literal["auto", "hover", "always"]],
-                Literal["auto", "hover", "always"],
+                Var[Literal["auto", "hover", "always", "none"]],
+                Literal["auto", "hover", "always", "none"],
             ]
         ] = None,
         color_scheme: Optional[
@@ -237,7 +239,7 @@ class Link(RadixThemesComponent, A, MemoizationLeaf):
             size: Text size: "1" - "9"
             weight: Thickness of text: "light" | "regular" | "medium" | "bold"
             trim: Removes the leading trim space: "normal" | "start" | "end" | "both"
-            underline: Sets the visibility of the underline affordance: "auto" | "hover" | "always"
+            underline: Sets the visibility of the underline affordance: "auto" | "hover" | "always" | "none"
             color_scheme: Overrides the accent color inherited from the Theme.
             high_contrast: Whether to render the text with higher contrast color
             is_external: If True, the link will open in a new tab
@@ -281,3 +283,5 @@ class Link(RadixThemesComponent, A, MemoizationLeaf):
             Component: The link component
         """
         ...
+
+link = Link.create

@@ -29,11 +29,10 @@ from reflex.vars import Var
 
 logger = logging.getLogger("pyi_generator")
 
-INIT_FILE = Path("reflex/__init__.pyi").resolve()
 PWD = Path(".").resolve()
 
 EXCLUDED_FILES = [
-    "__init__.py",
+    "app.py",
     "component.py",
     "bare.py",
     "foreach.py",
@@ -116,6 +115,29 @@ def _get_type_hint(value, type_hint_globals, is_optional=True) -> str:
     """
     res = ""
     args = get_args(value)
+
+    if value is type(None):
+        return "None"
+
+    if rx_types.is_union(value):
+        if type(None) in value.__args__:
+            res_args = [
+                _get_type_hint(arg, type_hint_globals, rx_types.is_optional(arg))
+                for arg in value.__args__
+                if arg is not type(None)
+            ]
+            if len(res_args) == 1:
+                return f"Optional[{res_args[0]}]"
+            else:
+                res = f"Union[{', '.join(res_args)}]"
+                return f"Optional[{res}]"
+
+        res_args = [
+            _get_type_hint(arg, type_hint_globals, rx_types.is_optional(arg))
+            for arg in value.__args__
+        ]
+        return f"Union[{', '.join(res_args)}]"
+
     if args:
         inner_container_type_args = (
             [repr(arg) for arg in args]
@@ -140,6 +162,20 @@ def _get_type_hint(value, type_hint_globals, is_optional=True) -> str:
                 res = f"Union[{res}]"
     elif isinstance(value, str):
         ev = eval(value, type_hint_globals)
+        if rx_types.is_optional(ev):
+            # hints = {
+            #     _get_type_hint(arg, type_hint_globals, is_optional=False)
+            #     for arg in ev.__args__
+            # }
+            return _get_type_hint(ev, type_hint_globals, is_optional=False)
+            # return f"Optional[{', '.join(hints)}]"
+
+        if rx_types.is_union(ev):
+            res = [
+                _get_type_hint(arg, type_hint_globals, rx_types.is_optional(arg))
+                for arg in ev.__args__
+            ]
+            return f"Union[{', '.join(res)}]"
         res = (
             _get_type_hint(ev, type_hint_globals, is_optional=False)
             if ev.__name__ == "Var"
@@ -284,6 +320,7 @@ def _extract_class_props_as_ast_nodes(
     all_props = []
     kwargs = []
     for target_class in clzs:
+        event_triggers = target_class().get_event_triggers()
         # Import from the target class to ensure type hints are resolvable.
         exec(f"from {target_class.__module__} import *", type_hint_globals)
         for name, value in target_class.__annotations__.items():
@@ -291,6 +328,7 @@ def _extract_class_props_as_ast_nodes(
                 name in spec.kwonlyargs
                 or name in EXCLUDED_PROPS
                 or name in all_props
+                or name in event_triggers
                 or (isinstance(value, str) and "ClassVar" in value)
             ):
                 continue
@@ -386,7 +424,7 @@ def _generate_component_create_functiondef(
             ),
             ast.Constant(value=None),
         )
-        for trigger in sorted(clz().get_event_triggers().keys())
+        for trigger in sorted(clz().get_event_triggers())
     )
     logger.debug(f"Generated {clz.__name__}.create method with {len(kwargs)} kwargs")
     create_args = ast.arguments(
@@ -423,7 +461,60 @@ def _generate_component_create_functiondef(
     return definition
 
 
+def _generate_staticmethod_call_functiondef(
+    node: ast.FunctionDef | None,
+    clz: type[Component] | type[SimpleNamespace],
+    type_hint_globals: dict[str, Any],
+) -> ast.FunctionDef | None:
+    ...
+
+    fullspec = getfullargspec(clz.__call__)
+
+    call_args = ast.arguments(
+        args=[
+            ast.arg(
+                name,
+                annotation=ast.Name(
+                    id=_get_type_hint(
+                        anno := fullspec.annotations[name],
+                        type_hint_globals,
+                        is_optional=rx_types.is_optional(anno),
+                    )
+                ),
+            )
+            for name in fullspec.args
+        ],
+        posonlyargs=[],
+        kwonlyargs=[],
+        kw_defaults=[],
+        kwarg=ast.arg(arg="props"),
+        defaults=[ast.Constant(value=default) for default in fullspec.defaults]
+        if fullspec.defaults
+        else [],
+    )
+    definition = ast.FunctionDef(
+        name="__call__",
+        args=call_args,
+        body=[
+            ast.Expr(value=ast.Constant(value=clz.__call__.__doc__)),
+            ast.Expr(
+                value=ast.Constant(...),
+            ),
+        ],
+        decorator_list=[ast.Name(id="staticmethod")],
+        lineno=node.lineno if node is not None else None,
+        returns=ast.Constant(
+            value=_get_type_hint(
+                typing.get_type_hints(clz.__call__).get("return", None),
+                type_hint_globals,
+            )
+        ),
+    )
+    return definition
+
+
 def _generate_namespace_call_functiondef(
+    node: ast.ClassDef | None,
     clz_name: str,
     classes: dict[str, type[Component] | type[SimpleNamespace]],
     type_hint_globals: dict[str, Any],
@@ -431,6 +522,7 @@ def _generate_namespace_call_functiondef(
     """Generate the __call__ function definition for a SimpleNamespace.
 
     Args:
+        node: The existing __call__ classdef parent node from the ast
         clz_name: The name of the SimpleNamespace class to generate the __call__ functiondef for.
         classes: Map name to actual class definition.
         type_hint_globals: The globals to use to resolving a type hint str.
@@ -445,10 +537,12 @@ def _generate_namespace_call_functiondef(
 
     clz = classes[clz_name]
 
+    if not hasattr(clz.__call__, "__self__"):
+        return _generate_staticmethod_call_functiondef(node, clz, type_hint_globals)  # type: ignore
+
     # Determine which class is wrapped by the namespace __call__ method
     component_clz = clz.__call__.__self__
 
-    # Only generate for create functions
     if clz.__call__.__func__.__name__ != "create":
         return None
 
@@ -602,6 +696,7 @@ class StubGenerator(ast.NodeTransformer):
                 if not child.targets[:]:
                     node.body.remove(child)
                 call_definition = _generate_namespace_call_functiondef(
+                    node,
                     self.current_class,
                     self.classes,
                     type_hint_globals=self.type_hint_globals,
@@ -682,6 +777,13 @@ class StubGenerator(ast.NodeTransformer):
             # Remove annotated assignments in Component classes (props)
             return None
 
+        # remove dunder method assignments for lazy_loader.attach
+        for target in node.targets:
+            if isinstance(target, ast.Tuple):
+                for name in target.elts:
+                    if isinstance(name, ast.Name) and name.id.startswith("_"):
+                        return
+
         return node
 
     def visit_AnnAssign(self, node: ast.AnnAssign) -> ast.AnnAssign | None:
@@ -712,6 +814,23 @@ class StubGenerator(ast.NodeTransformer):
         return node
 
 
+class InitStubGenerator(StubGenerator):
+    """A node transformer that will generate the stubs for a given init file."""
+
+    def visit_Import(
+        self, node: ast.Import | ast.ImportFrom
+    ) -> ast.Import | ast.ImportFrom | list[ast.Import | ast.ImportFrom]:
+        """Collect import statements from the init module.
+
+        Args:
+            node: The import node to visit.
+
+        Returns:
+                The modified import node(s).
+        """
+        return [node]
+
+
 class PyiGenerator:
     """A .pyi file generator that will scan all defined Component in Reflex and
     generate the approriate stub.
@@ -737,9 +856,11 @@ class PyiGenerator:
                 mode=black.mode.Mode(is_pyi=True),
             ).splitlines():
                 # Bit of a hack here, since the AST cannot represent comments.
-                if "def create(" in formatted_line:
-                    pyi_content.append(formatted_line + "  # type: ignore")
-                elif "Figure" in formatted_line:
+                if (
+                    "def create(" in formatted_line
+                    or "Figure" in formatted_line
+                    or "Var[Template]" in formatted_line
+                ):
                     pyi_content.append(formatted_line + "  # type: ignore")
                 else:
                     pyi_content.append(formatted_line)
@@ -750,6 +871,37 @@ class PyiGenerator:
         pyi_path = module_path.with_suffix(".pyi")
         pyi_path.write_text("\n".join(pyi_content))
         logger.info(f"Wrote {relpath}")
+
+    def _get_init_lazy_imports(self, mod, new_tree):
+        # retrieve the _SUBMODULES and _SUBMOD_ATTRS from an init file if present.
+        sub_mods = getattr(mod, "_SUBMODULES", None)
+        sub_mod_attrs = getattr(mod, "_SUBMOD_ATTRS", None)
+
+        if not sub_mods and not sub_mod_attrs:
+            return
+        sub_mods_imports = []
+        sub_mod_attrs_imports = []
+
+        if sub_mods:
+            sub_mods_imports = [
+                f"from . import {mod} as {mod}" for mod in sorted(sub_mods)
+            ]
+            sub_mods_imports.append("")
+
+        if sub_mod_attrs:
+            sub_mod_attrs = {
+                attr: mod for mod, attrs in sub_mod_attrs.items() for attr in attrs
+            }
+            # construct the import statement and handle special cases for aliases
+            sub_mod_attrs_imports = [
+                f"from .{path} import {mod if not isinstance(mod, tuple) else mod[0]} as {mod if not isinstance(mod, tuple) else mod[1]}"
+                for mod, path in sub_mod_attrs.items()
+            ]
+            sub_mod_attrs_imports.append("")
+
+        text = "\n" + "\n".join([*sub_mods_imports, *sub_mod_attrs_imports])
+        text += ast.unparse(new_tree) + "\n"
+        return text
 
     def _scan_file(self, module_path: Path):
         module_import = (
@@ -769,13 +921,22 @@ class PyiGenerator:
             and obj != Component
             and inspect.getmodule(obj) == module
         }
-        if not class_names:
+        is_init_file = _relative_to_pwd(module_path).name == "__init__.py"
+        if not class_names and not is_init_file:
             return
 
-        new_tree = StubGenerator(module, class_names).visit(
-            ast.parse(inspect.getsource(module))
-        )
-        self._write_pyi_file(module_path, ast.unparse(new_tree))
+        if is_init_file:
+            new_tree = InitStubGenerator(module, class_names).visit(
+                ast.parse(inspect.getsource(module))
+            )
+            init_imports = self._get_init_lazy_imports(module, new_tree)
+            if init_imports:
+                self._write_pyi_file(module_path, init_imports)
+        else:
+            new_tree = StubGenerator(module, class_names).visit(
+                ast.parse(inspect.getsource(module))
+            )
+            self._write_pyi_file(module_path, ast.unparse(new_tree))
 
     def _scan_files_multiprocess(self, files: list[Path]):
         with Pool(processes=cpu_count()) as pool:
@@ -795,7 +956,12 @@ class PyiGenerator:
         file_targets = []
         for target in targets:
             target_path = Path(target)
-            if target_path.is_file() and target_path.suffix == ".py":
+            if (
+                target_path.is_file()
+                and target_path.suffix == ".py"
+                and target_path.name not in EXCLUDED_FILES
+                and "reflex/components" in str(target_path)
+            ):
                 file_targets.append(target_path)
                 continue
             if not target_path.is_dir():
@@ -827,16 +993,3 @@ class PyiGenerator:
             self._scan_files(file_targets)
         else:
             self._scan_files_multiprocess(file_targets)
-
-
-def generate_init():
-    """Generate a pyi file for the main __init__.py."""
-    from reflex import _MAPPING  # type: ignore
-
-    imports = [
-        f"from {path if mod != path.rsplit('.')[-1] or mod == 'page' else '.'.join(path.rsplit('.')[:-1])} import {mod} as {mod}"
-        for mod, path in _MAPPING.items()
-    ]
-    imports.append("")
-    with contextlib.suppress(Exception):
-        INIT_FILE.write_text("\n".join(imports))

@@ -1,4 +1,5 @@
 """Welcome to Reflex! This file outlines the steps to create a basic app."""
+
 from typing import Callable
 
 import reflex as rx
@@ -44,7 +45,7 @@ def template(main_content: Callable[[], rx.Component]) -> rx.Component:
                 ),
                 rx.chakra.menu_item(
                     rx.chakra.link(
-                        "Contact", href="mailto:founders@=reflex.dev", width="100%"
+                        "Contact", href="mailto:founders@reflex.dev", width="100%"
                     )
                 ),
             ),

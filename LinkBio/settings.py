@@ -52,6 +52,7 @@ NNFS = 'https://nnfs.io/'
 CURSO_INT_PYTHON = 'https://amzn.eu/d/02T5rnrG'
 PYTHON_TRICKS = 'https://amzn.eu/d/0fk8HItg'
 EFFECTIVE_PYTHON = 'https://amzn.eu/d/0fRLKFGu'
+FASTAPI_DATA_SCIENCE = 'https://amzn.eu/d/0cQJej0u'
 
 
 REFLEX_URL = 'http://reflex.dev'

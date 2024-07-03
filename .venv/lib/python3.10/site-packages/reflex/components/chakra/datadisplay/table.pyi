@@ -184,6 +184,7 @@ class Thead(ChakraComponent):
 
         """
         ...
+
     @staticmethod
     def validate_headers(headers): ...
 
@@ -264,6 +265,7 @@ class Tbody(ChakraComponent):
             Component: The table body component
         """
         ...
+
     @staticmethod
     def validate_rows(rows): ...
 
@@ -344,6 +346,7 @@ class Tfoot(ChakraComponent):
             The table footer component.
         """
         ...
+
     @staticmethod
     def validate_footers(footers): ...
 
@@ -502,9 +505,6 @@ class Th(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -583,9 +583,6 @@ class Td(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -664,9 +661,6 @@ class TableCaption(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -743,8 +737,5 @@ class TableContainer(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...

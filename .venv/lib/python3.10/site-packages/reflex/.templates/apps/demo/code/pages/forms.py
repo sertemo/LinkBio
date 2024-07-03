@@ -1,4 +1,5 @@
 """The settings page for the template."""
+
 import reflex as rx
 
 from ..states.form_state import FormState, UploadState
@@ -18,8 +19,8 @@ forms_1_code = """rx.chakra.vstack(
                 rx.chakra.checkbox("Checked", id="check"),
                 rx.chakra.switch("Switched", id="switch"),
             ),
-            rx.chakra.button("Submit", 
-                       type_="submit", 
+            rx.chakra.button("Submit",
+                       type_="submit",
                        bg="#ecfdf5",
                        color="#047857",
                        border_radius="lg",

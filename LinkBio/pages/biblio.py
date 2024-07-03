@@ -28,6 +28,7 @@ def biblio() -> rx.Component:
                     color=TextColor.BODY.value,
                     size=styles.Size.BIG.value,
                 ),
+                rx.spacer(spacing='9'),
                 link_button(
                     "Aprende Python en un fin de semana",
                     "Alfredo Moreno Muñoz & Sheila Córcoles Córcoles",
@@ -76,14 +77,21 @@ def biblio() -> rx.Component:
                     settings.EFFECTIVE_PYTHON,
                     Image.open("assets/img/effective_python.jpg"),
                 ),
+                link_button(
+                    "Building Data Science Applications with FastAPI",
+                    "François Voron",
+                    settings.FASTAPI_DATA_SCIENCE,
+                    Image.open("assets/img/fastapi.jpg"),
+                ),
                 max_width=styles.MAX_WIDTH,
                 width='100%',
                 margin_y=styles.Size.BIG.value,
                 padding_left=styles.Pad.LARGE.value,
                 padding_right=styles.Pad.LARGE.value,
+                spacing=styles.Size.DEFAULT.value
             ),
         ),        
         footer(),
-        height='100vh',
+        height='100%',
         margin_bottom=styles.Size.ZERO.value
     )

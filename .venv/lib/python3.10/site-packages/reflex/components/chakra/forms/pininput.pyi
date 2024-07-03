@@ -7,17 +7,16 @@ from typing import Any, Dict, Literal, Optional, Union, overload
 from reflex.vars import Var, BaseVar, ComputedVar
 from reflex.event import EventChain, EventHandler, EventSpec
 from reflex.style import Style
-from typing import Any, Optional, Union
+from typing import Optional
 from reflex.components.chakra import ChakraComponent, LiteralInputVariant
 from reflex.components.component import Component
 from reflex.components.tags.tag import Tag
-from reflex.constants import EventTriggers
+from reflex.event import EventHandler
 from reflex.utils import format
 from reflex.utils.imports import ImportDict, merge_imports
 from reflex.vars import Var
 
 class PinInput(ChakraComponent):
-    def get_event_triggers(self) -> dict[str, Union[Var, Any]]: ...
     def get_ref(self) -> str | None: ...
     @overload
     @classmethod
@@ -110,7 +109,7 @@ class PinInput(ChakraComponent):
 
         Args:
             *children: The children of the component.
-            value: State var to bind the the input.
+            value: State var to bind the input.
             auto_focus: If true, the pin input receives focus on mount
             default_value: The default value of the pin input
             error_border_color: The border color when the input is invalid.
@@ -147,7 +146,7 @@ class PinInputField(ChakraComponent):
     def create(  # type: ignore
         cls,
         *children,
-        index: Optional[Var[int]] = None,
+        index: Optional[Union[Var[int], int]] = None,
         name: Optional[Union[Var[str], str]] = None,
         style: Optional[Style] = None,
         key: Optional[Any] = None,
@@ -218,8 +217,5 @@ class PinInputField(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...

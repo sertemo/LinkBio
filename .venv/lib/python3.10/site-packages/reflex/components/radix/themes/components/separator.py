@@ -1,4 +1,5 @@
 """Interactive components provided by @radix-ui/themes."""
+
 from typing import Literal
 
 from reflex.vars import Var
@@ -17,7 +18,7 @@ class Separator(RadixThemesComponent):
     tag = "Separator"
 
     # The size of the select: "1" | "2" | "3" | "4"
-    size: Var[LiteralSeperatorSize] = Var.create_safe("4")
+    size: Var[LiteralSeperatorSize] = Var.create_safe("4", _var_is_string=True)
 
     # The color of the select
     color_scheme: Var[LiteralAccentColor]

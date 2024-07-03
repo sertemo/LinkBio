@@ -14,10 +14,11 @@ from reflex.components.chakra.layout import Box
 from reflex.components.chakra.media import Icon
 from reflex.components.component import Component
 from reflex.components.core.cond import color_mode_cond
+from reflex.constants.colors import Color
 from reflex.event import set_clipboard
 from reflex.style import Style
-from reflex.utils import format, imports
-from reflex.utils.imports import ImportVar
+from reflex.utils import format
+from reflex.utils.imports import ImportDict, ImportVar
 from reflex.vars import Var
 
 LiteralCodeBlockTheme = Literal[
@@ -350,6 +351,7 @@ LiteralCodeLanguage = Literal[
 ]
 
 class CodeBlock(Component):
+    def add_imports(self) -> ImportDict: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -1029,7 +1031,7 @@ class CodeBlock(Component):
         show_line_numbers: Optional[Union[Var[bool], bool]] = None,
         starting_line_number: Optional[Union[Var[int], int]] = None,
         wrap_long_lines: Optional[Union[Var[bool], bool]] = None,
-        custom_style: Optional[Dict[str, str]] = None,
+        custom_style: Optional[Dict[str, Union[str, Var, Color]]] = None,
         code_tag_props: Optional[Union[Var[Dict[str, str]], Dict[str, str]]] = None,
         style: Optional[Style] = None,
         key: Optional[Any] = None,
@@ -1110,5 +1112,9 @@ class CodeBlock(Component):
             The text component.
         """
         ...
+
+    def add_style(self): ...
     @staticmethod
     def convert_theme_name(theme) -> str: ...
+
+code_block = CodeBlock.create

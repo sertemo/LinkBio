@@ -7,7 +7,6 @@ from typing import Any, Dict, Literal, Optional, Union, overload
 from reflex.vars import Var, BaseVar, ComputedVar
 from reflex.event import EventChain, EventHandler, EventSpec
 from reflex.style import Style
-from typing import Any, Union
 from reflex.components.chakra import (
     ChakraComponent,
     LiteralChakraDirection,
@@ -15,10 +14,10 @@ from reflex.components.chakra import (
     LiteralPopOverTrigger,
 )
 from reflex.components.component import Component
+from reflex.event import EventHandler
 from reflex.vars import Var
 
 class Popover(ChakraComponent):
-    def get_event_triggers(self) -> dict[str, Union[Var, Any]]: ...
     @overload
     @classmethod
     def create(  # type: ignore
@@ -227,9 +226,6 @@ class PopoverContent(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -306,9 +302,6 @@ class PopoverHeader(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -385,9 +378,6 @@ class PopoverFooter(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -464,9 +454,6 @@ class PopoverBody(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -543,9 +530,6 @@ class PopoverArrow(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -622,9 +606,6 @@ class PopoverCloseButton(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -701,9 +682,6 @@ class PopoverAnchor(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
 
@@ -780,8 +758,5 @@ class PopoverTrigger(ChakraComponent):
 
         Returns:
             The component.
-
-        Raises:
-            TypeError: If an invalid child is passed.
         """
         ...
