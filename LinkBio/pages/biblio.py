@@ -83,6 +83,18 @@ def biblio() -> rx.Component:
                     settings.FASTAPI_DATA_SCIENCE,
                     Image.open("assets/img/fastapi.jpg"),
                 ),
+                link_button(
+                    "Machine Learning with PyTorch and Scikit-Learn",
+                    "Sebastian Raschka",
+                    settings.ML_W_PYTORCH,
+                    Image.open("assets/img/ml_w_pytorch.jpg"),
+                ),
+                link_button(
+                    "Git GitHub desde cero",
+                    "Brais Moure",
+                    settings.GITHUB_DSD_CERO,
+                    Image.open("assets/img/github_dsd_cero.jpg"),
+                ),
                 max_width=styles.MAX_WIDTH,
                 width='100%',
                 margin_y=styles.Size.BIG.value,

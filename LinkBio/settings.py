@@ -53,6 +53,8 @@ CURSO_INT_PYTHON = 'https://amzn.eu/d/02T5rnrG'
 PYTHON_TRICKS = 'https://amzn.eu/d/0fk8HItg'
 EFFECTIVE_PYTHON = 'https://amzn.eu/d/0fRLKFGu'
 FASTAPI_DATA_SCIENCE = 'https://amzn.eu/d/0cQJej0u'
+ML_W_PYTORCH = 'https://amzn.eu/d/05cpmLkG'
+GITHUB_DSD_CERO = 'https://amzn.eu/d/0isPwcge'
 
 
 REFLEX_URL = 'http://reflex.dev'
